@@ -1,0 +1,48 @@
+/* CSS files add styling rules to your content */
+
+body {
+    font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
+    margin: 2em;
+    background-color: #222222;
+  }
+  
+h1 {
+    font-style: italic;
+    color: #373fff;
+}
+ 
+p {
+    color: white;
+}
+
+div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.butt {
+    width: 1000px;
+}
+
+.field {
+    border: solid black 1px;
+    width: 1000px;
+    height: 800px;
+}
+  
+.alive, .empty {
+    border: solid black 1px;
+    width: 18px; /* 18 + (border=1) * 2 = 20 */
+    height: 18px;
+}
+  
+.alive {
+    background-color: darkgreen;
+}
+
+.empty {
+      background-color: white;
+}
+  
