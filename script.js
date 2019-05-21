@@ -3,26 +3,37 @@ var par = document.getElementsByClassName('field')[0]; // поле
 var ch = document.getElementById('0'); // первая пустая клетка
 var interv; // интервал
 
-var w = Math.floor(par.offsetWidth / ch.offsetWidth); // число клеток по ширине
-var h = Math.floor(par.offsetHeight / ch.offsetHeight); // число клеток по длине
+const w = Math.floor(par.offsetWidth / ch.offsetWidth); // число клеток по ширине
+const h = Math.floor(par.offsetHeight / ch.offsetHeight); // число клеток по длине
 par.removeChild(ch);
 
 // генерируем поле
 var e;
 var c = 0; // общее кол-во клеток
-for (var i = 0; i < w; ++i) {
-    for (var j = 0; j < h; ++j) {
-        e = document.createElement('div');
-        e.className = 'empty';
-        e.id = String(c);
-        //e.addEventListener('click', change_class);
-        e.addEventListener('mouseover', change_class);
-        df.appendChild(e);
-        ++c;
+createField();
+
+// навешиваем эвенты на кнопки
+e = document.getElementById('start_button');
+e.addEventListener('click', start);
+e = document.getElementById('restart_button');
+e.addEventListener('click', restart);
+
+
+// генерация поля
+function createField() {
+    for (var i = 0; i < w; ++i) {
+        for (var j = 0; j < h; ++j) {
+            e = document.createElement('div');
+            e.className = 'empty';
+            e.id = String(c);
+            //e.addEventListener('click', change_class);
+            e.addEventListener('mouseover', change_class);
+            df.appendChild(e);
+            ++c;
+        }
     }
+    par.appendChild(df);
 }
-par.appendChild(df);
-//----------------------------------------------
 
 // изменение типа (класса) клетки
 function change_class(e) { 
@@ -33,7 +44,7 @@ function change_class(e) {
 }
 
 // начать игру заново
-function restart() {
+function restart(ev) {
     clearInterval(interv);
     for (i = 0; i < c; ++i) {
         e = document.getElementById(String(i));
@@ -43,7 +54,7 @@ function restart() {
 }
 
 // начать игру "Жизнь"
-function start() {
+function start(ev) {
     for (i = 0; i < c; ++i) {
         e = document.getElementById(String(i));
         e.myData = 0; // создаем новый атрибут
@@ -54,7 +65,7 @@ function start() {
     }
 
     // время одной итерации
-    var t = document.getElementById("txt").value;
+    var t = document.getElementById("seconds").value;
     if (t < 0.1)
         t = 5;
     t *= 1000;
@@ -88,81 +99,87 @@ function step() {
         y = e.id % w; // столбец
         x = Math.floor(e.id / w); // строка
         // проверяем ее соседей
-        cnt = check_neighbors(x, y);
-        if ((e.className == 'empty') && (cnt > 2)) 
-            e.newType = 'alive'; // в клетке зародается жизнь
-        else if ((e.className == 'alive') && ((cnt < 2) || (cnt > 3)))
-            e.newType = 'empty'; // клетка умирает
-        else 
-            e.newType = e.className;
-    }
-    
-    // меняем состояния клеток
-    for (i = 0; i < c; ++i) {
-        e = document.getElementById(String(i));
-        e.className = e.newType;
+        cnt = check_neighbors(i, x, y);
+        if ((e.className == 'empty') && (cnt > 2)) {
+            e.oldClassName = 'empty';
+            e.className = 'alive'; // в клетке зародается жизнь
+        } else if ((e.className == 'alive') && ((cnt < 2) || (cnt > 3))) {
+            e.oldClassName = 'alive';
+            e.className = 'empty'; // клетка умирает
+        } else 
+            e.oldClassName = e.className;
     }
 }
 
+// проверка одной клетки
+function check_oneCell(d, d1, e1) {
+    if (d1 < d) { // проверяемая клетка на поле до текущей
+        if (e1.oldClassName == 'alive')
+            return 1;
+    } else if (e1.className == 'alive') // проверяемая клетка на поле после текущей
+        return 1;
+    return 0;
+}
+
 // проверка соседей
-function check_neighbors(x, y) {
-    var a = 0;
+function check_neighbors(d, x, y) {
+    var a = 0, d1;
     var e1;
 
     if (x - 1 >= 0) {
         // (x - 1; y - 1)
         if (y - 1 >= 0) { 
-            e1 = document.getElementById(String((x - 1) * w + y - 1)); 
-            if (e1.className == 'alive')
-                ++a;
+            d1 = (x - 1) * w + y - 1;
+            e1 = document.getElementById(String(d1)); 
+            a += check_oneCell(d, d1, e1);
         }
 
         // (x - 1; y)
-        e1 = document.getElementById(String((x - 1) * w + y)); 
-        if (e1.className == 'alive')
-            ++a;
+        d1 = (x - 1) * w + y;
+        e1 = document.getElementById(String(d1)); 
+        a += check_oneCell(d, d1, e1);
         
         // (x - 1; y + 1)
         if (y + 1 < w) {
-            e1 = document.getElementById(String((x - 1) * w + y + 1)); 
-            if (e1.className == 'alive')
-                ++a;
+            d1 = (x - 1) * w + y + 1;
+            e1 = document.getElementById(String(d1)); 
+            a += check_oneCell(d, d1, e1);
         }
     }
 
     if (y - 1 >= 0) { 
         // (x; y - 1)
-        e1 = document.getElementById(String(x * w + y - 1)); 
-        if (e1.className == 'alive')
-            ++a;
+        d1 = x * w + y - 1;
+        e1 = document.getElementById(String(d1)); 
+        a += check_oneCell(d, d1, e1);
 
         // (x + 1; y - 1)
         if (x + 1 < h) { 
-            e1 = document.getElementById(String((x + 1) * w + y - 1)); 
-            if (e1.className == 'alive')
-                ++a;
+            d1 = (x + 1) * w + y - 1;
+            e1 = document.getElementById(String(d1)); 
+            a += check_oneCell(d, d1, e1);
         }
     }
 
     if (x + 1 < h) { 
         // (x + 1; y)
-        e1 = document.getElementById(String((x + 1) * w + y)); 
-        if (e1.className == 'alive')
-            ++a;
+        d1 = (x + 1) * w + y;
+        e1 = document.getElementById(String(d1)); 
+        a += check_oneCell(d, d1, e1);
 
         // (x + 1; y + 1)
         if (y + 1 < h) {
-            e1 = document.getElementById(String((x + 1) * w + y + 1)); 
-            if (e1.className == 'alive')
-                ++a;
+            d1 = (x + 1) * w + y + 1;
+            e1 = document.getElementById(String(d1)); 
+            a += check_oneCell(d, d1, e1);
         }
     }
 
     // (x; y + 1)
     if (y + 1 < h) {
-        e1 = document.getElementById(String(x * w + y + 1)); 
-        if (e1.className == 'alive')
-            ++a;
+        d1 = x * w + y + 1;
+        e1 = document.getElementById(String(d1)); 
+        a += check_oneCell(d, d1, e1);
     }
 
     return a;
