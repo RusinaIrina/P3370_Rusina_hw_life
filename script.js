@@ -111,75 +111,65 @@ function step() {
     }
 }
 
-// проверка одной клетки
-function check_oneCell(d, d1, e1) {
-    if (d1 < d) { // проверяемая клетка на поле до текущей
-        if (e1.oldClassName == 'alive')
-            return 1;
-    } else if (e1.className == 'alive') // проверяемая клетка на поле после текущей
-        return 1;
-    return 0;
-}
-
 // проверка соседей
 function check_neighbors(d, x, y) {
-    var a = 0, d1;
+    var a = 0;
     var e1;
 
     if (x - 1 >= 0) {
         // (x - 1; y - 1)
         if (y - 1 >= 0) { 
-            d1 = (x - 1) * w + y - 1;
-            e1 = document.getElementById(String(d1)); 
-            a += check_oneCell(d, d1, e1);
+            e1 = document.getElementById(String((x - 1) * w + y - 1)); 
+            if (e1.oldClassName == 'alive')
+                ++a;
         }
 
         // (x - 1; y)
-        d1 = (x - 1) * w + y;
-        e1 = document.getElementById(String(d1)); 
-        a += check_oneCell(d, d1, e1);
+        e1 = document.getElementById(String((x - 1) * w + y)); 
+        if (e1.oldClassName == 'alive')
+            ++a;
         
         // (x - 1; y + 1)
         if (y + 1 < w) {
-            d1 = (x - 1) * w + y + 1;
-            e1 = document.getElementById(String(d1)); 
-            a += check_oneCell(d, d1, e1);
+            e1 = document.getElementById(String((x - 1) * w + y + 1)); 
+            if (e1.oldClassName == 'alive')
+                ++a;
         }
     }
 
     if (y - 1 >= 0) { 
         // (x; y - 1)
-        d1 = x * w + y - 1;
-        e1 = document.getElementById(String(d1)); 
-        a += check_oneCell(d, d1, e1);
+        e1 = document.getElementById(String(x * w + y - 1)); 
+        if (e1.oldClassName == 'alive')
+            ++a;
 
         // (x + 1; y - 1)
         if (x + 1 < h) { 
-            d1 = (x + 1) * w + y - 1;
-            e1 = document.getElementById(String(d1)); 
-            a += check_oneCell(d, d1, e1);
+            e1 = document.getElementById(String((x + 1) * w + y - 1)); 
+            if (e1.className == 'alive')
+                ++a;
         }
     }
 
     if (x + 1 < h) { 
         // (x + 1; y)
-        d1 = (x + 1) * w + y;
-        e1 = document.getElementById(String(d1)); 
-        a += check_oneCell(d, d1, e1);
+        e1 = document.getElementById(String((x + 1) * w + y)); 
+        if (e1.className == 'alive')
+            ++a;
 
         // (x + 1; y + 1)
         if (y + 1 < h) {
-            d1 = (x + 1) * w + y + 1;
-            e1 = document.getElementById(String(d1)); 
-            a += check_oneCell(d, d1, e1);
+            e1 = document.getElementById(String((x + 1) * w + y + 1)); 
+            if (e1.className == 'alive')
+                ++a;
         }
     }
 
     // (x; y + 1)
     if (y + 1 < h) {
-        d1 = x * w + y + 1;
-        e1 = document.getElementById(String(d1)); 
-        a += check_oneCell(d, d1, e1);
+        e1 = document.getElementById(String(x * w + y + 1)); 
+        if (e1.className == 'alive')
+            ++a;
     }
 
     return a;
