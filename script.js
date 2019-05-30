@@ -46,7 +46,7 @@ function change_class(e) {
 // начать игру заново
 function restart(ev) {
     clearInterval(interv);
-    for (i = 0; i < c; ++i) {
+    for (var i = 0; i < c; ++i) {
         e = document.getElementById(String(i));
         e.className = 'empty';
         e.addEventListener('mouseover', change_class);
@@ -55,9 +55,8 @@ function restart(ev) {
 
 // начать игру "Жизнь"
 function start(ev) {
-    for (i = 0; i < c; ++i) {
+    for (var i = 0; i < c; ++i) {
         e = document.getElementById(String(i));
-        e.myData = 0; // создаем новый атрибут
         //e.removeEventListener('click', change_class);
         e.removeEventListener('mouseover', change_class);
         e.addEventListener('mouseover', murder);
@@ -93,13 +92,13 @@ function step() {
     var cnt; // счетчик соседей
     
     // пересчитываем типы клеток 
-    for (i = 0; i < c; ++i) {
+    for (var i = 0; i < c; ++i) {
         e = document.getElementById(String(i));
         // находим координаты клетки на поле
         y = e.id % w; // столбец
         x = Math.floor(e.id / w); // строка
         // проверяем ее соседей
-        cnt = check_neighbors(i, x, y);
+        cnt = check_neighbors(x, y);
         if ((e.className == 'empty') && (cnt > 2)) {
             e.oldClassName = 'empty';
             e.className = 'alive'; // в клетке зародается жизнь
@@ -112,7 +111,7 @@ function step() {
 }
 
 // проверка соседей
-function check_neighbors(d, x, y) {
+function check_neighbors(x, y) {
     var a = 0;
     var e1;
 
